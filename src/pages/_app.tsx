@@ -1,6 +1,10 @@
 import "@/styles/globals.css";
+import { GeistSans } from "geist/font/sans"
 import type { AppProps } from "next/app";
 
+
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return <div className={`${GeistSans.className} antialiased dark:bg-gray-950`}>
+    <Component {...pageProps} />
+  </div>
 }
