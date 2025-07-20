@@ -1,35 +1,35 @@
-// Tremor AreaChart [v1.0.0]
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Tremor Raw LineChart [v0.0.0]
 
 "use client"
 
-import React from "react"
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react"
+import React from "react"
 import {
-  Area,
   CartesianGrid,
   Dot,
   Label,
   Line,
-  AreaChart as RechartsAreaChart,
   Legend as RechartsLegend,
+  LineChart as RechartsLineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts"
-import type { AxisDomain } from "recharts/types/util/types"
+import { AxisDomain } from "recharts/types/util/types"
 
 import {
   AvailableChartColors,
+  AvailableChartColorsKeys,
   constructCategoryColors,
   getColorClassName,
   getYAxisDomain,
   hasOnlyOneValueForKey,
-  type AvailableChartColorsKeys,
 } from "@/lib/chartUtils"
 import { useOnWindowResize } from "@/lib/useOnWindowResize"
-import { cx } from "@/lib/utils"
+import { cx, percentageFormatter } from "@/lib/utils"
+import { Badge } from "./Badge"
+import { getBadgeType } from "./ui/overview/DashboardChartCard"
 
 //#region Legend
 
@@ -51,9 +51,9 @@ const LegendItem = ({
     <li
       className={cx(
         // base
-        "group inline-flex flex-nowrap items-center gap-1.5 rounded-sm px-2 py-1 whitespace-nowrap transition",
+        "group inline-flex flex-nowrap items-center gap-1.5 whitespace-nowrap rounded px-2 py-1 transition",
         hasOnValueChange
-          ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+          ? "bg-transpaent cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
           : "cursor-default",
       )}
       onClick={(e) => {
@@ -67,12 +67,12 @@ const LegendItem = ({
           getColorClassName(color, "bg"),
           activeLegend && activeLegend !== name ? "opacity-40" : "opacity-100",
         )}
-        aria-hidden={true}
+        aria-hidden="true"
       />
       <p
         className={cx(
           // base
-          "truncate text-xs whitespace-nowrap",
+          "truncate whitespace-nowrap text-xs",
           // text color
           "text-gray-700 dark:text-gray-300",
           hasOnValueChange &&
@@ -120,7 +120,7 @@ const ScrollButton = ({ icon, onClick, disabled }: ScrollButtonProps) => {
       type="button"
       className={cx(
         // base
-        "group inline-flex size-5 items-center truncate rounded-sm transition",
+        "group inline-flex size-5 items-center truncate rounded transition",
         disabled
           ? "cursor-not-allowed text-gray-400 dark:text-gray-600"
           : "cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-50",
@@ -168,7 +168,6 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
     ...other
   } = props
   const scrollableRef = React.useRef<HTMLInputElement>(null)
-  const scrollButtonsRef = React.useRef<HTMLDivElement>(null)
   const [hasScroll, setHasScroll] = React.useState<HasScrollProps | null>(null)
   const [isKeyDowned, setIsKeyDowned] = React.useState<string | null>(null)
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null)
@@ -187,16 +186,14 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
   const scrollToTest = React.useCallback(
     (direction: "left" | "right") => {
       const element = scrollableRef?.current
-      const scrollButtons = scrollButtonsRef?.current
-      const scrollButtonsWith = scrollButtons?.clientWidth ?? 0
       const width = element?.clientWidth ?? 0
 
       if (element && enableLegendSlider) {
         element.scrollTo({
           left:
             direction === "left"
-              ? element.scrollLeft - width + scrollButtonsWith
-              : element.scrollLeft + width - scrollButtonsWith,
+              ? element.scrollLeft - width
+              : element.scrollLeft + width,
           behavior: "smooth",
         })
         setTimeout(() => {
@@ -265,7 +262,7 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
           "flex h-full",
           enableLegendSlider
             ? hasScroll?.right || hasScroll?.left
-              ? "snap-mandatory items-center overflow-auto pr-12 pl-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              ? "snap-mandatory items-center overflow-auto pl-4 pr-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               : ""
             : "flex-wrap",
         )}
@@ -285,7 +282,7 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
           <div
             className={cx(
               // base
-              "absolute top-0 right-0 bottom-0 flex h-full items-center justify-center pr-1",
+              "absolute bottom-0 right-0 top-0 flex h-full items-center justify-center pr-1",
               // background color
               "bg-white dark:bg-gray-950",
             )}
@@ -322,8 +319,6 @@ const ChartLegend = (
   activeLegend: string | undefined,
   onClick?: (category: string, color: string) => void,
   enableLegendSlider?: boolean,
-  legendPosition?: "left" | "center" | "right",
-  yAxisWidth?: number,
 ) => {
   const legendRef = React.useRef<HTMLDivElement>(null)
 
@@ -333,25 +328,13 @@ const ChartLegend = (
     setLegendHeight(calculateHeight(legendRef.current?.clientHeight))
   })
 
-  const legendPayload = payload.filter((item: any) => item.type !== "none")
-
-  const paddingLeft =
-    legendPosition === "left" && yAxisWidth ? yAxisWidth - 8 : 0
+  const filteredPayload = payload.filter((item: any) => item.type !== "none")
 
   return (
-    <div
-      ref={legendRef}
-      style={{ paddingLeft: paddingLeft }}
-      className={cx(
-        "flex items-center",
-        { "justify-center": legendPosition === "center" },
-        { "justify-start": legendPosition === "left" },
-        { "justify-end": legendPosition === "right" },
-      )}
-    >
+    <div ref={legendRef} className="flex items-center justify-end">
       <Legend
-        categories={legendPayload.map((entry: any) => entry.value)}
-        colors={legendPayload.map((entry: any) =>
+        categories={filteredPayload.map((entry: any) => entry.value)}
+        colors={filteredPayload.map((entry: any) =>
           categoryColors.get(entry.value),
         )}
         onClickLegendItem={onClick}
@@ -364,31 +347,66 @@ const ChartLegend = (
 
 //#region Tooltip
 
-type TooltipProps = Pick<ChartTooltipProps, "active" | "payload" | "label">
-
-type PayloadItem = {
-  category: string
-  value: number
-  index: string
-  color: AvailableChartColorsKeys
-  type?: string
-  payload: any
+interface ChartTooltipRowProps {
+  value: string
+  name: string
+  color: string
 }
+
+const ChartTooltipRow = ({ value, name, color }: ChartTooltipRowProps) => (
+  <div className="flex items-center justify-between space-x-8">
+    <div className="flex items-center space-x-2">
+      <span
+        aria-hidden="true"
+        className={cx("h-[3px] w-3.5 shrink-0 rounded-full", color)}
+      />
+      <p
+        className={cx(
+          // commmon
+          "whitespace-nowrap text-right",
+          // text color
+          "text-gray-700 dark:text-gray-300",
+        )}
+      >
+        {name}
+      </p>
+    </div>
+    <p
+      className={cx(
+        // base
+        "whitespace-nowrap text-right font-medium tabular-nums",
+        // text color
+        "text-gray-900 dark:text-gray-50",
+      )}
+    >
+      {value}
+    </p>
+  </div>
+)
 
 interface ChartTooltipProps {
   active: boolean | undefined
-  payload: PayloadItem[]
+  payload: any
   label: string
+  categoryColors: Map<string, string>
   valueFormatter: (value: number) => string
 }
 
-const ChartTooltip = ({
+const OverviewChartTooltip = ({
   active,
   payload,
-  label,
+  categoryColors,
   valueFormatter,
 }: ChartTooltipProps) => {
-  if (active && payload && payload.length) {
+  if (active && payload) {
+    const filteredPayload = payload.filter((item: any) => item.type !== "none")
+
+    if (!active || !payload) return null
+
+    const title = payload[0].payload.title
+    const evolution = payload[0].payload.evolution
+    if (!title) return null
+
     return (
       <div
         className={cx(
@@ -400,7 +418,7 @@ const ChartTooltip = ({
           "bg-white dark:bg-gray-950",
         )}
       >
-        <div className={cx("border-b border-inherit px-4 py-2")}>
+        <div className="flex items-start justify-between gap-2 border-b border-inherit p-2">
           <p
             className={cx(
               // base
@@ -409,46 +427,33 @@ const ChartTooltip = ({
               "text-gray-900 dark:text-gray-50",
             )}
           >
-            {label}
+            {title}
           </p>
+          {evolution !== undefined && (
+            <Badge variant={getBadgeType(evolution)}>
+              {percentageFormatter(evolution)}
+            </Badge>
+          )}
         </div>
-        <div className={cx("space-y-1 px-4 py-2")}>
-          {payload.map(({ value, category, color }, index) => (
-            <div
-              key={`id-${index}`}
-              className="flex items-center justify-between space-x-8"
-            >
-              <div className="flex items-center space-x-2">
-                <span
-                  aria-hidden="true"
-                  className={cx(
-                    "h-[3px] w-3.5 shrink-0 rounded-full",
-                    getColorClassName(color, "bg"),
-                  )}
-                />
-                <p
-                  className={cx(
-                    // base
-                    "text-right whitespace-nowrap",
-                    // text color
-                    "text-gray-700 dark:text-gray-300",
-                  )}
-                >
-                  {category}
-                </p>
-              </div>
-              <p
-                className={cx(
-                  // base
-                  "text-right font-medium whitespace-nowrap tabular-nums",
-                  // text color
-                  "text-gray-900 dark:text-gray-50",
+        <div className={cx("space-y-1 p-2")}>
+          {filteredPayload.map((payload: any, index: number) => {
+            const payloadData = payload.payload
+            return (
+              <ChartTooltipRow
+                key={`id-${index}`}
+                value={valueFormatter(payload.value)}
+                name={
+                  index === 0
+                    ? payloadData.formattedDate
+                    : payloadData.previousFormattedDate
+                }
+                color={getColorClassName(
+                  categoryColors.get(payload.name) as AvailableChartColorsKeys,
+                  "bg",
                 )}
-              >
-                {valueFormatter(value)}
-              </p>
-            </div>
-          ))}
+              />
+            )
+          })}
         </div>
       </div>
     )
@@ -456,7 +461,7 @@ const ChartTooltip = ({
   return null
 }
 
-//#region AreaChart
+//#region LineChart
 
 interface ActiveDot {
   index?: number
@@ -469,9 +474,9 @@ type BaseEventProps = {
   [key: string]: number | string
 }
 
-type AreaChartEventProps = BaseEventProps | null | undefined
+type LineChartEventProps = BaseEventProps | null | undefined
 
-interface AreaChartProps extends React.HTMLAttributes<HTMLDivElement> {
+interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: Record<string, any>[]
   index: string
   categories: string[]
@@ -489,20 +494,15 @@ interface AreaChartProps extends React.HTMLAttributes<HTMLDivElement> {
   minValue?: number
   maxValue?: number
   allowDecimals?: boolean
-  onValueChange?: (value: AreaChartEventProps) => void
+  onValueChange?: (value: LineChartEventProps) => void
   enableLegendSlider?: boolean
   tickGap?: number
   connectNulls?: boolean
   xAxisLabel?: string
   yAxisLabel?: string
-  type?: "default" | "stacked" | "percent"
-  legendPosition?: "left" | "center" | "right"
-  fill?: "gradient" | "solid" | "none"
-  tooltipCallback?: (tooltipCallbackContent: TooltipProps) => void
-  customTooltip?: React.ComponentType<TooltipProps>
 }
 
-const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
+const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
   (props, ref) => {
     const {
       data = [],
@@ -529,16 +529,9 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
       tickGap = 5,
       xAxisLabel,
       yAxisLabel,
-      type = "default",
-      legendPosition = "right",
-      fill = "gradient",
-      tooltipCallback,
-      customTooltip,
       ...other
     } = props
-    const CustomTooltip = customTooltip
-    const paddingValue =
-      (!showXAxis && !showYAxis) || (startEndOnly && !showYAxis) ? 0 : 20
+    const paddingValue = !showXAxis && !showYAxis ? 0 : 20
     const [legendHeight, setLegendHeight] = React.useState(60)
     const [activeDot, setActiveDot] = React.useState<ActiveDot | undefined>(
       undefined,
@@ -550,49 +543,6 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
 
     const yAxisDomain = getYAxisDomain(autoMinValue, minValue, maxValue)
     const hasOnValueChange = !!onValueChange
-    const stacked = type === "stacked" || type === "percent"
-    const areaId = React.useId()
-
-    const prevActiveRef = React.useRef<boolean | undefined>(undefined)
-    const prevLabelRef = React.useRef<string | undefined>(undefined)
-
-    const getFillContent = ({
-      fillType,
-      activeDot,
-      activeLegend,
-      category,
-    }: {
-      fillType: AreaChartProps["fill"]
-      activeDot: ActiveDot | undefined
-      activeLegend: string | undefined
-      category: string
-    }) => {
-      const stopOpacity =
-        activeDot || (activeLegend && activeLegend !== category) ? 0.1 : 0.3
-
-      switch (fillType) {
-        case "none":
-          return <stop stopColor="currentColor" stopOpacity={0} />
-        case "gradient":
-          return (
-            <>
-              <stop
-                offset="5%"
-                stopColor="currentColor"
-                stopOpacity={stopOpacity}
-              />
-              <stop offset="95%" stopColor="currentColor" stopOpacity={0} />
-            </>
-          )
-        case "solid":
-        default:
-          return <stop stopColor="currentColor" stopOpacity={stopOpacity} />
-      }
-    }
-
-    function valueToPercent(value: number) {
-      return `${(value * 100).toFixed(0)}%`
-    }
 
     function onDotClick(itemData: any, event: React.MouseEvent) {
       event.stopPropagation()
@@ -643,14 +593,9 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        className={cx("h-80 w-full", className)}
-        tremor-id="tremor-raw"
-        {...other}
-      >
+      <div ref={ref} className={cx("h-80 w-full", className)} {...other}>
         <ResponsiveContainer>
-          <RechartsAreaChart
+          <RechartsLineChart
             data={data}
             onClick={
               hasOnValueChange && (activeLegend || activeDot)
@@ -665,9 +610,8 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
               bottom: xAxisLabel ? 30 : undefined,
               left: yAxisLabel ? 20 : undefined,
               right: yAxisLabel ? 5 : undefined,
-              top: 5,
+              top: 0,
             }}
-            stackOffset={type === "percent" ? "expand" : undefined}
           >
             {showGridLines ? (
               <CartesianGrid
@@ -725,9 +669,7 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
                 // text fill
                 "fill-gray-500 dark:fill-gray-500",
               )}
-              tickFormatter={
-                type === "percent" ? valueToPercent : valueFormatter
-              }
+              tickFormatter={valueFormatter}
               allowDecimals={allowDecimals}
             >
               {yAxisLabel && (
@@ -749,49 +691,22 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
               cursor={{ stroke: "#d1d5db", strokeWidth: 1 }}
               offset={20}
               position={{ y: 0 }}
-              content={({ active, payload, label }) => {
-                const cleanPayload: TooltipProps["payload"] = payload
-                  ? payload.map((item: any) => ({
-                      category: item.dataKey,
-                      value: item.value,
-                      index: item.payload[index],
-                      color: categoryColors.get(
-                        item.dataKey,
-                      ) as AvailableChartColorsKeys,
-                      type: item.type,
-                      payload: item.payload,
-                    }))
-                  : []
-
-                if (
-                  tooltipCallback &&
-                  (active !== prevActiveRef.current ||
-                    label !== prevLabelRef.current)
-                ) {
-                  tooltipCallback({ active, payload: cleanPayload, label })
-                  prevActiveRef.current = active
-                  prevLabelRef.current = label
-                }
-
-                return showTooltip && active ? (
-                  CustomTooltip ? (
-                    <CustomTooltip
+              content={
+                showTooltip ? (
+                  ({ active, payload, label }) => (
+                    <OverviewChartTooltip
                       active={active}
-                      payload={cleanPayload}
-                      label={label}
-                    />
-                  ) : (
-                    <ChartTooltip
-                      active={active}
-                      payload={cleanPayload}
+                      payload={payload}
                       label={label}
                       valueFormatter={valueFormatter}
+                      categoryColors={categoryColors}
                     />
                   )
-                ) : null
-              }}
+                ) : (
+                  <></>
+                )
+              }
             />
-
             {showLegend ? (
               <RechartsLegend
                 verticalAlign="top"
@@ -807,160 +722,116 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
                           onCategoryClick(clickedLegendItem)
                       : undefined,
                     enableLegendSlider,
-                    legendPosition,
-                    yAxisWidth,
                   )
                 }
               />
             ) : null}
-            <defs>
-            {categories.map((category) => {
-              const categoryId = `${areaId}-${category.replace(/[^a-zA-Z0-9]/g, "")}`
-              return (
-                <React.Fragment key={category}>
-                    <linearGradient
-                      key={category}
+            {categories.map((category) => (
+              <Line
+                className={cx(
+                  getColorClassName(
+                    categoryColors.get(category) as AvailableChartColorsKeys,
+                    "stroke",
+                  ),
+                )}
+                strokeOpacity={
+                  activeDot || (activeLegend && activeLegend !== category)
+                    ? 0.3
+                    : 1
+                }
+                activeDot={(props: any) => {
+                  const {
+                    cx: cxCoord,
+                    cy: cyCoord,
+                    stroke,
+                    strokeLinecap,
+                    strokeLinejoin,
+                    strokeWidth,
+                    dataKey,
+                  } = props
+                  return (
+                    <Dot
                       className={cx(
+                        "stroke-white dark:stroke-gray-950",
+                        onValueChange ? "cursor-pointer" : "",
                         getColorClassName(
                           categoryColors.get(
-                            category,
+                            dataKey,
                           ) as AvailableChartColorsKeys,
-                          "text",
+                          "fill",
                         ),
                       )}
-                      id={categoryId}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      {getFillContent({
-                        fillType: fill,
-                        activeDot: activeDot,
-                        activeLegend: activeLegend,
-                        category: category,
-                      })}
-                    </linearGradient>
-                </React.Fragment>
-              )
-            })}
-            </defs>
-            
-            {categories.map((category) => {
-              const categoryId = `${areaId}-${category.replace(/[^a-zA-Z0-9]/g, "")}`
-              return (
-                <React.Fragment key={category}>
-                  <Area
-                    className={cx(
-                      getColorClassName(
-                        categoryColors.get(
-                          category,
-                        ) as AvailableChartColorsKeys,
-                        "stroke",
-                      ),
-                    )}
-                    strokeOpacity={
-                      activeDot || (activeLegend && activeLegend !== category)
-                        ? 0.3
-                        : 1
-                    }
-                    activeDot={(props: any) => {
-                      const {
-                        cx: cxCoord,
-                        cy: cyCoord,
-                        stroke,
-                        strokeLinecap,
-                        strokeLinejoin,
-                        strokeWidth,
-                        dataKey,
-                      } = props
-                      return (
-                        <Dot
-                          className={cx(
-                            "stroke-white dark:stroke-gray-950",
-                            onValueChange ? "cursor-pointer" : "",
-                            getColorClassName(
-                              categoryColors.get(
-                                dataKey,
-                              ) as AvailableChartColorsKeys,
-                              "fill",
-                            ),
-                          )}
-                          cx={cxCoord}
-                          cy={cyCoord}
-                          r={5}
-                          fill=""
-                          stroke={stroke}
-                          strokeLinecap={strokeLinecap}
-                          strokeLinejoin={strokeLinejoin}
-                          strokeWidth={strokeWidth}
-                          onClick={(_, event) => onDotClick(props, event)}
-                        />
-                      )
-                    }}
-                    dot={(props: any) => {
-                      const {
-                        stroke,
-                        strokeLinecap,
-                        strokeLinejoin,
-                        strokeWidth,
-                        cx: cxCoord,
-                        cy: cyCoord,
-                        dataKey,
-                        index,
-                      } = props
+                      cx={cxCoord}
+                      cy={cyCoord}
+                      r={5}
+                      fill=""
+                      stroke={stroke}
+                      strokeLinecap={strokeLinecap}
+                      strokeLinejoin={strokeLinejoin}
+                      strokeWidth={strokeWidth}
+                      onClick={(_, event) => onDotClick(props, event)}
+                    />
+                  )
+                }}
+                dot={(props: any) => {
+                  const {
+                    stroke,
+                    strokeLinecap,
+                    strokeLinejoin,
+                    strokeWidth,
+                    cx: cxCoord,
+                    cy: cyCoord,
+                    dataKey,
+                    index,
+                  } = props
 
-                      if (
-                        (hasOnlyOneValueForKey(data, category) &&
-                          !(
-                            activeDot ||
-                            (activeLegend && activeLegend !== category)
-                          )) ||
-                        (activeDot?.index === index &&
-                          activeDot?.dataKey === category)
-                      ) {
-                        return (
-                          <Dot
-                            key={index}
-                            cx={cxCoord}
-                            cy={cyCoord}
-                            r={5}
-                            stroke={stroke}
-                            fill=""
-                            strokeLinecap={strokeLinecap}
-                            strokeLinejoin={strokeLinejoin}
-                            strokeWidth={strokeWidth}
-                            className={cx(
-                              "stroke-white dark:stroke-gray-950",
-                              onValueChange ? "cursor-pointer" : "",
-                              getColorClassName(
-                                categoryColors.get(
-                                  dataKey,
-                                ) as AvailableChartColorsKeys,
-                                "fill",
-                              ),
-                            )}
-                          />
-                        )
-                      }
-                      return <React.Fragment key={index}></React.Fragment>
-                    }}
-                    key={category}
-                    name={category}
-                    type="linear"
-                    dataKey={category}
-                    stroke=""
-                    strokeWidth={2}
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    isAnimationActive={false}
-                    connectNulls={connectNulls}
-                    stackId={stacked ? "stack" : undefined}
-                    fill={`url(#${categoryId})`}
-                  />
-                </React.Fragment>
-              )
-            })}
+                  if (
+                    (hasOnlyOneValueForKey(data, category) &&
+                      !(
+                        activeDot ||
+                        (activeLegend && activeLegend !== category)
+                      )) ||
+                    (activeDot?.index === index &&
+                      activeDot?.dataKey === category)
+                  ) {
+                    return (
+                      <Dot
+                        key={index}
+                        cx={cxCoord}
+                        cy={cyCoord}
+                        r={5}
+                        stroke={stroke}
+                        fill=""
+                        strokeLinecap={strokeLinecap}
+                        strokeLinejoin={strokeLinejoin}
+                        strokeWidth={strokeWidth}
+                        className={cx(
+                          "stroke-white dark:stroke-gray-950",
+                          onValueChange ? "cursor-pointer" : "",
+                          getColorClassName(
+                            categoryColors.get(
+                              dataKey,
+                            ) as AvailableChartColorsKeys,
+                            "fill",
+                          ),
+                        )}
+                      />
+                    )
+                  }
+                  return <React.Fragment key={index}></React.Fragment>
+                }}
+                key={category}
+                name={category}
+                type="linear"
+                dataKey={category}
+                stroke=""
+                strokeWidth={2}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                isAnimationActive={false}
+                connectNulls={connectNulls}
+              />
+            ))}
             {/* hidden lines to increase clickable target area */}
             {onValueChange
               ? categories.map((category) => (
@@ -985,13 +856,13 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
                   />
                 ))
               : null}
-          </RechartsAreaChart>
+          </RechartsLineChart>
         </ResponsiveContainer>
       </div>
     )
   },
 )
 
-AreaChart.displayName = "AreaChart"
+LineChart.displayName = "LineChart"
 
-export { AreaChart, type AreaChartEventProps, type TooltipProps }
+export { LineChart, type LineChartEventProps }
