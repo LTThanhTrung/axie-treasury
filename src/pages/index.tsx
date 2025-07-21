@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFoot,
   TableHead,
@@ -11,17 +10,12 @@ import {
   TableRoot,
   TableRow,
 } from "@/components/Table"
-import { CategoryBarCard } from "@/components/ui/overview/DashboardProgressBarCard";
-import { CategoryBar } from "@/components/CategoryBar";
-import { Button } from "@/components/Button";
+
 import Spinner from "@/components/Spinner";
 import { Filterbar } from "@/components/ui/overview/DashboardFilterbar"
 
 import { Card } from "@/components/Card";
 import DonutChartCallbackExample from "@/components/Test"
-import { AreaChartTypeExample } from "@/components/Test2";
-import { DonutChart, TooltipProps } from "@/components/DonutChart"
-import { RiMoneyDollarBoxFill, RiAlarmWarningLine } from "@remixicon/react";
 import { cx } from "@/lib/utils"
 import React from "react"
 import { DateRange } from "react-day-picker"
@@ -275,7 +269,7 @@ export default function Home() {
     to: maxDate,
   })
   const [selectedPeriod, setSelectedPeriod] =
-    React.useState<PeriodValue>("last-year")
+    React.useState<PeriodValue>("no-comparison")
 
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     categories.map((category) => category.title),
@@ -300,7 +294,7 @@ export default function Home() {
           </Card>
           <Card>
             <p className="font-semibold tracking-tight text-gray-700 transition-all group-data-[state=active]:text-indigo-600 sm:text-lg dark:text-gray-400 dark:group-data-[state=active]:text-indigo-400">
-              Revenue Breakdown (USD)
+              Revenue Breakdown (USD 2)
             </p>
             <div className="mt-2">
               <BarListExample />
@@ -315,20 +309,18 @@ export default function Home() {
             Overview
           </h1>
           <div className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 bg-white pb-4 pt-4 sm:pt-6 lg:top-0 lg:mx-0 lg:px-0 lg:pt-8 dark:border-gray-800 dark:bg-gray-950">
+            <Filterbar
+              maxDate={maxDate}
+              minDate={new Date(2023, 0, 1)}
+              selectedDates={selectedDates}
+              onDatesChange={(dates) => setSelectedDates(dates)}
+              selectedPeriod={selectedPeriod}
+              onPeriodChange={(period) => setSelectedPeriod(period)}
+              categories={categories}
+              setSelectedCategories={setSelectedCategories}
+              selectedCategories={selectedCategories}
+            />
           </div>
-                  <div className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 bg-white pb-4 pt-4 sm:pt-6 lg:top-0 lg:mx-0 lg:px-0 lg:pt-8 dark:border-gray-800 dark:bg-gray-950">
-          <Filterbar
-            maxDate={maxDate}
-            minDate={new Date(2024, 0, 1)}
-            selectedDates={selectedDates}
-            onDatesChange={(dates) => setSelectedDates(dates)}
-            selectedPeriod={selectedPeriod}
-            onPeriodChange={(period) => setSelectedPeriod(period)}
-            categories={categories}
-            setSelectedCategories={setSelectedCategories}
-            selectedCategories={selectedCategories}
-          />
-        </div>
           <dl
             className={cx(
               "mt-10 grid grid-cols-1 gap-14 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2",

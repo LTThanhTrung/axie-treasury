@@ -482,7 +482,7 @@ const SingleDatePicker = ({
   placeholder = "Select date",
   hasError,
   translations,
-  enableYearNavigation = false,
+  enableYearNavigation = true,
   locale = enUS,
   align = "center",
   ...props
@@ -706,7 +706,7 @@ const RangeDatePicker = ({
   disabled,
   disableNavigation,
   disabledDays,
-  enableYearNavigation = false,
+  enableYearNavigation = true,
   locale = enUS,
   showTimePicker,
   placeholder = "Select date range",

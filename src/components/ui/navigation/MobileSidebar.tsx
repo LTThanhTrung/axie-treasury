@@ -5,48 +5,22 @@ import {
   DrawerBody,
   DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/Drawer"
 import { cx, focusRing } from "@/lib/utils"
 import {
   RiHome2Line,
   RiLinkM,
-  RiListCheck,
   RiMenuLine,
-  RiSettings5Line,
 } from "@remixicon/react"
+import ThemeSwitch from "@/components/ThemeSwitch"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navigation = [
   { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line },
-  { name: "Whitepaper" , href: siteConfig.baseLinks.whitepaper, icon: RiLinkM}
+  { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM }
 ] as const
-
-// const shortcuts = [
-//   {
-//     name: "Add new user",
-//     href: "/settings/users",
-//     icon: RiLinkM,
-//   },
-//   {
-//     name: "Workspace usage",
-//     href: "/settings/billing#billing-overview",
-//     icon: RiLinkM,
-//   },
-//   {
-//     name: "Cost spend control",
-//     href: "/settings/billing#cost-spend-control",
-//     icon: RiLinkM,
-//   },
-//   {
-//     name: "Overview – RON",
-//     href: "/overview#usage-overview",
-//     icon: RiLinkM,
-//   },
-// ] as const
 
 export default function MobileSidebar() {
   const pathname = usePathname()
@@ -98,10 +72,13 @@ export default function MobileSidebar() {
                   </li>
                 ))}
               </ul>
+
             </nav>
           </DrawerBody>
+          <ThemeSwitch />
         </DrawerContent>
       </Drawer>
+
     </>
   )
 }
