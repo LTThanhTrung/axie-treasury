@@ -119,7 +119,7 @@ export function TableHero({ price }: TableHeroProps) {
               <TableRow key={item.name}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.price.toFixed(2)}</TableCell>
-                <TableCell>{item.amount.toFixed(2)}</TableCell>
+                <TableCell>{item.amount.toLocaleString(undefined, {maximumFractionDigits: 2})}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -210,7 +210,7 @@ export default function Home() {
               <>
                 <div className="flex flex-row items-center gap-x-2">
                   <p className="font-semibold tracking-tight text-gray-700 transition-all group-data-[state=active]:text-indigo-600 sm:text-lg dark:text-gray-400 dark:group-data-[state=active]:text-indigo-400">
-                    Token Breakdown By USD
+                    Token Breakdown By Amount
                   </p>
                 </div>
                 <TableHero price={price} />
