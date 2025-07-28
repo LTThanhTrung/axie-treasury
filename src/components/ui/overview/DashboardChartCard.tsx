@@ -85,7 +85,7 @@ export function ChartCard({
     ?.map((date, index) => {
       const overview = data[index]
       const prevOverview = prevData[index]
-      const value = (overview?.[title] as number) || null
+      const value = (overview?.[title] as number) || 0
       const previousValue = (prevOverview?.[title] as number) || null
 
       return {
@@ -134,11 +134,11 @@ export function ChartCard({
       </div>
       <div className="mt-2 flex items-baseline justify-between">
         <dd className="text-xl text-gray-900 dark:text-gray-50">
-          {formatter(value)}
+          {(value.toFixed(2))}
         </dd>
         {selectedPeriod !== "no-comparison" && (
           <dd className="text-sm text-gray-500">
-            from {formatter(previousValue)}
+            from {previousValue.toFixed(2)}
           </dd>
         )}
       </div>

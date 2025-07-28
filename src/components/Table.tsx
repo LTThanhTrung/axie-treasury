@@ -173,7 +173,7 @@ const TableCaption = React.forwardRef<
 TableCaption.displayName = "TableCaption"
 
 export {
-  Table,
+  Table,  
   TableBody,
   TableCaption,
   TableCell,

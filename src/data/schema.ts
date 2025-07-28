@@ -8,13 +8,24 @@ export type Usage = {
 }
 
 export type OverviewData = {
-  date: string
+  "date": string
   "RON": number
-  "ETH": number
-  AXS: number
-  "UDSC": number
-  "Sign ups": number
-  Logins: number
-  "Sign outs": number
-  "Support calls": number
+  "WETH": number
+  "AXS": number
+  "USDC": number
+}
+
+export type TokenData = {
+  "name" : string,
+  "price" : number,
+  "amount": number,
+  "value" : number
+}
+
+export type TokenAmount = {
+  [key: string] : number
+}
+
+export type TransactionTypeData = {
+  [key: string] : TokenAmount
 }

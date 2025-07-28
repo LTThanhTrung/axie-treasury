@@ -2,7 +2,6 @@ import React from 'react';
 
 // Spinner component inspired by Tremor.so's minimalist design
 const Spinner = ({ size = 'md', color = 'currentColor', className = '' }) => {
-    console.log(color)
   let spinnerSizeClasses = '';
   let borderWidthClasses = '';
 

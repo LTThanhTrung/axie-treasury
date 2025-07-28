@@ -221,7 +221,7 @@ Trigger.displayName = "DatePicker.Trigger"
 // ============================================================================
 
 const CalendarPopover = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitives.Content>,
+  React.ComponentRef<typeof PopoverPrimitives.Content>,
   React.ComponentProps<typeof PopoverPrimitives.Content>
 >(({ align, className, children, ...props }, forwardedRef) => {
   return (

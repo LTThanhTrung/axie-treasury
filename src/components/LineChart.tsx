@@ -387,7 +387,7 @@ const ChartTooltipRow = ({ value, name, color }: ChartTooltipRowProps) => (
 interface ChartTooltipProps {
   active: boolean | undefined
   payload: any
-  label: string
+  label: string | number | undefined
   categoryColors: Map<string, string>
   valueFormatter: (value: number) => string
 }
@@ -441,7 +441,7 @@ const OverviewChartTooltip = ({
             return (
               <ChartTooltipRow
                 key={`id-${index}`}
-                value={valueFormatter(payload.value)}
+                value={payload.value.toFixed(2)}
                 name={
                   index === 0
                     ? payloadData.formattedDate
@@ -693,15 +693,17 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
               position={{ y: 0 }}
               content={
                 showTooltip ? (
-                  ({ active, payload, label }) => (
+                  ({ active, payload, label }) => {
+                    return (
                     <OverviewChartTooltip
                       active={active}
                       payload={payload}
-                      label={label}
+                      label={123}
                       valueFormatter={valueFormatter}
                       categoryColors={categoryColors}
                     />
                   )
+                  }
                 ) : (
                   <></>
                 )

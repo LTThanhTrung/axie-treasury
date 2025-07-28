@@ -1,10 +1,12 @@
 // Tremor BarList [v1.0.0]
 
 import React from "react"
+import { typeData } from "@/data/type-data"
+import { TokenPrice } from "@/pages/api/getTokenPrice"
 
 import { cx, focusRing } from "@/lib/utils"
 
-type Bar<T> = T & {
+export type Bar<T> = T & {
   key?: string
   href?: string
   value: number
@@ -14,6 +16,7 @@ type Bar<T> = T & {
 interface BarListProps<T = unknown>
   extends React.HTMLAttributes<HTMLDivElement> {
   data: Bar<T>[]
+  price: TokenPrice[] | undefined
   valueFormatter?: (value: number) => string
   showAnimation?: boolean
   onValueChange?: (payload: Bar<T>) => void
@@ -153,7 +156,7 @@ function BarListInner<T>(
                 "text-gray-900 dark:text-gray-50",
               )}
             >
-              {valueFormatter(item.value)}
+              {item.value.toLocaleString()}
             </p>
           </div>
         ))}

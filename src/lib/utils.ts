@@ -2,6 +2,7 @@
 
 import clsx, { type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { TransactionTypeData, TokenAmount } from "@/data/schema"
 
 export function cx(...args: ClassValue[]) {
   return twMerge(clsx(...args))
@@ -74,4 +75,40 @@ export const formatters: { [key: string]: any } = {
       currency: currency,
     }).format(number),
   unit: (number: number) => `${usNumberformatter(number)}`,
+}
+
+export const tokenAddressesToNames: { [address: string]: string } = {
+  "0x97a9107c1793bc407d6f527b77e7fff4d812bece": "AXS", // Example token
+  "0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5": "WETH", // Example token
+  "0x0000000000000000000000000000000000000000": "RON", // Common representation for native currency
+  "0x0b7007c13325c48911f73a2dad5fa5dcbf808adc": "USDC", // Example token
+  // ... add more as needed
+};
+
+
+export function flattenAndSumTokens(data: TransactionTypeData): TokenAmount {
+  const flattenedResult: TokenAmount = {};
+
+  // Iterate over each category (Breeding, Marketplace, etc.)
+  for (const category in data) {
+    if (Object.prototype.hasOwnProperty.call(data, category)) {
+      const tokens = data[category];
+
+      // Iterate over each token and its value within the current category
+      for (const tokenAddress in tokens) {
+        if (Object.prototype.hasOwnProperty.call(tokens, tokenAddress)) {
+          const value = tokens[tokenAddress];
+
+          // If the tokenAddress already exists in our flattenedResult, add the value
+          // Otherwise, initialize it with the current value
+          if (flattenedResult[tokenAddress]) {
+            flattenedResult[tokenAddress] += value;
+          } else {
+            flattenedResult[tokenAddress] = value;
+          }
+        }
+      }
+    }
+  }
+  return flattenedResult;
 }

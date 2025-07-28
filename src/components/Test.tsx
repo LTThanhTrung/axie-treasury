@@ -1,41 +1,26 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 
 import { DonutChart, TooltipProps } from "@/components/DonutChart"
+import { TokenPrice } from "@/pages/api/getTokenPrice"
+import { typeData } from "@/data/type-data"
+import { tokenAddressesToNames, flattenAndSumTokens } from "@/lib/utils"
 
 interface DataItem {
   name: string
   amount: number,
-  value: number
+  value: number,
+  address: string
 }
 
-const data: DataItem[] = [
-  {
-    name: "AXS",
-    amount: 4890,
-    value: 10,
-  },
-  {
-    name: "WETH",
-    amount: 2103,
-    value: 20
-  },
-  {
-    name: "RON",
-    amount: 2050,
-    value: 30
+interface DonutChartProps {
+  price: TokenPrice[] | undefined
+}
 
-  },
-  {
-    name: "USDC",
-    amount: 1300,
-    value: 40
-  },
-]
-
-function DonutChartCallbackExample() {
+function DonutChartCallbackExample({price}:DonutChartProps) {
   const [datas, setDatas] = React.useState<TooltipProps | null>(null)
+  const [data, setData] = React.useState<DataItem[]>()
 
   const sumNumericArray = (arr: number[]): number =>
     arr.reduce((sum, num) => sum + num, 0)
@@ -46,40 +31,55 @@ function DonutChartCallbackExample() {
   const payload = datas?.payload?.[0]
   const value = payload?.value ?? 0
 
-  const formattedValue = payload
+  useEffect(() => {
+    if (price != undefined && price != null) {
+      let flattenedData = flattenAndSumTokens(typeData)
+      let tokens = Object.keys(flattenedData)
+      let data: any = tokens.map((token) => {
+        let tokenIndex = price.findIndex((item)=> item.address == token)
+        let amount = tokenAddressesToNames[token] == "WETH"? flattenedData[token] -  56078 : flattenedData[token]
+        return {
+          name: tokenAddressesToNames[token],
+          amount: amount,
+          value: amount * price[tokenIndex].price ,
+          address: token
+        }
+      })
+      setData(data)
+    }
+  }, [price])
+
+  const formattedValue = payload 
     ? currencyFormatter(value)
-    : currencyFormatter(
-        sumNumericArray(data.map((dataPoint) => dataPoint.amount)),
-      )
+    : data ? currencyFormatter(
+        sumNumericArray(data.map((dataPoint) => dataPoint.value)),
+      ) : 0
 
   return (
     <div>
       <p className="text-center font-semibold text-gray-700 dark:text-gray-300 group-data-[state=active]:text-indigo-600 sm:text-lg dark:text-gray-400 dark:group-data-[state=active]:text-indigo-400">
-        Revenue by category
+        Treasury by token
       </p>
       <p className="mt-2 w-full text-center text-xl font-semibold text-gray-900 dark:text-gray-50">
         {formattedValue}
       </p>
+      {data ?       
       <DonutChart
         data={data}
         category="name"
-        value="amount"
+        value="value"
         className="mx-auto mt-2"
         colors={["blue", "violet", "cyan", "emerald"]}
         tooltipCallback={(props) => {
           if (props.active) {
-            // setDatas((prev) => {
-            //   if (prev?.payload[0].category === props.payload[0].category)
-            //     return prev
-            //   return props
-            // })
             return props
           } else {
             setDatas(null)
           }
           return null
         }}
-      />
+      /> : <></>}
+
     </div>
   )
 }
