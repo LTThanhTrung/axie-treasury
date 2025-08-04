@@ -152,7 +152,7 @@ export default function Home() {
     to: maxDate,
   })
   const [selectedPeriod, setSelectedPeriod] =
-    React.useState<PeriodValue>("previous-period")
+    React.useState<PeriodValue>("no-comparison")
 
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     categories.map((category) => category.title),
@@ -242,7 +242,6 @@ export default function Home() {
               selectedDates={selectedDates}
               onDatesChange={(dates) => setSelectedDates(dates)}
               selectedPeriod={selectedPeriod}
-              onPeriodChange={(period) => setSelectedPeriod(period)}
               categories={categories}
               setSelectedCategories={setSelectedCategories}
               selectedCategories={selectedCategories}

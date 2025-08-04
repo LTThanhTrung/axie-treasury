@@ -655,6 +655,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
             </XAxis>
             <YAxis
               width={yAxisWidth}
+              scale={"symlog"}
               hide={!showYAxis}
               axisLine={false}
               tickLine={false}
