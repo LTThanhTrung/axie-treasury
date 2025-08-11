@@ -1,6 +1,5 @@
 import { ThemeProvider } from "next-themes"
 import { Inter } from "next/font/google"
-import "@/styles/globals.css";
 
 import { Sidebar } from "@/components/ui/navigation/Sidebar"
 

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    image: web:latest
+    expose:
+      - "3000"
+    networks:
+      - axienet
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-axietreasury
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "8080:81"  
+    depends_on:
+      - web
+    networks:
+      - axienet
+      - default
+      - sharednet
+
+  mongodb_treasury:
+    image: mongo:7.0
+    container_name: mongodb_treasury
+    ports:
+      - "2718:27017"
+    volumes:
+      - mongo_treasury_data:/data/db
+    command: ["mongod", "--auth"]
+
+networks:
+  axienet:
+    driver: bridge
+  sharednet:
+    external: true
+
+volumes:
+  mongo_treasury_data:
