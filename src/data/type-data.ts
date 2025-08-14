@@ -1,20 +1,4 @@
-import { TransactionTypeData } from "./schema"
+import { TransactionTypeData } from "./schema";
+import typeDataJson from "./type-data.json";
 
-export const typeData: TransactionTypeData = {
-    Breeding: { '0x97a9107c1793bc407d6f527b77e7fff4d812bece': 22323313.005297616 },
-    Marketplace: {
-        '0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5': 58842.237826403376,
-        '0x0000000000000000000000000000000000000000': 72121.8085144381
-    },
-    Core: { '0x97a9107c1793bc407d6f527b77e7fff4d812bece': 540144.658787 },
-    Origins: { '0x97a9107c1793bc407d6f527b77e7fff4d812bece': 264386.83952216414 },
-    Pack: {
-        '0x0000000000000000000000000000000000000000': 4409.046474999999,
-        '0x0b7007c13325c48911f73a2dad5fa5dcbf808adc': 6509.195835999998
-    },
-    Other: {
-        '0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5': 0.03805143113425926,
-        '0x0000000000000000000000000000000000000000': 0.905522500350125,
-        '0x97a9107c1793bc407d6f527b77e7fff4d812bece': 189.8
-    }
-}
+export const typeData: TransactionTypeData = typeDataJson;
