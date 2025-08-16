@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Dashboard",
-  url: "https://dashboard.tremor.so", // TODO: change to website link
+  url: "https://axietreasury.com", 
   description: "Axie Infinity Dashboard",
   baseLinks: {
     home: "/",
