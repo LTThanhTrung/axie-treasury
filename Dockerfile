@@ -1,15 +1,19 @@
 FROM node:20-slim AS builder  
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+# Install pnpm
+RUN corepack enable
 
-COPY . .
-RUN npm run build
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-RUN npm prune --production
+COPY . . 
+RUN pnpm run build
+
+RUN pnpm prune --prod
 
 FROM node:20-slim
 WORKDIR /app
+RUN corepack enable
 COPY --from=builder /app ./
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
