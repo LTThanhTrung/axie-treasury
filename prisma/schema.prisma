@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model methods {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  Breeding    String[]
+  Core        String[]
+  Marketplace String[]
+  Origins     String[]
+  Other       String[]
+  Pack        String[]
+}
+
+model overviewData {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Multiple data types found: Float: 77.2%, Int: 22.8% out of 1000 sampled entries
+  AXS  Json
+  /// Multiple data types found: Float: 10.3%, Int: 89.7% out of 1000 sampled entries
+  RON  Json
+  /// Multiple data types found: Float: 3.3%, Int: 96.7% out of 1000 sampled entries
+  USDC Json
+  WETH Float
+  date String
+}
+
+model txns {
+  id           String  @id @map("_id")
+  amount       String
+  amountRaw    String
+  blockNumber  Int
+  eventTopic   String
+  fromAddress  String
+  isOutgoing   Boolean
+  logIndex     Int
+  method       String
+  timestamp    Int
+  toAddress    String
+  tokenAddress String
+  txHash       String
+
+  @@unique([blockNumber, logIndex], map: "uniq_block_log")
+}
