@@ -27,7 +27,7 @@ import { subDays, toDate } from "date-fns"
 import { overviews } from "@/data/overview-data"
 import { ChartCard } from "@/components/ui/overview/DashboardChartCard"
 
-import { Bar, BarList } from '@/components/BarChart'
+import { BarList } from '@/components/BarChart'
 import { OverviewData, TokenData } from "@/data/schema";
 import { TokenPrice } from "./api/getTokenPrice";
 
@@ -59,16 +59,6 @@ const categories: {
       type: "unit",
     }
   ]
-
-const data = [
-  { name: "marketplace", value: 843 },
-  { name: "breeding", value: 46 },
-  { name: "ascend", value: 3 },
-  { name: "evolve", value: 20 },
-  { name: "rune & charm", value: 108 },
-  { name: "streak restore", value: 384 },
-]
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

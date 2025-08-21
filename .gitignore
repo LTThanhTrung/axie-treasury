@@ -21,6 +21,7 @@
 /build
 
 # misc
+pnpm-lock.yaml
 .DS_Store
 *.pem
 

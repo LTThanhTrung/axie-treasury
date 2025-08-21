@@ -659,6 +659,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
               hide={!showYAxis}
               axisLine={false}
               tickLine={false}
+              scale={"symlog"}
               type="number"
               domain={yAxisDomain as AxisDomain}
               tick={{ transform: "translate(-3, 0)" }}
