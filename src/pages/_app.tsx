@@ -11,8 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className={`${GeistSans.className} antialiased dark:bg-gray-950`}>
         <Component {...pageProps} />
       </div>
-      <GoogleAnalytics gaId="G-JD9LGJBFFJ" />
-      <GoogleAnalytics gaId="G-927VPJX6JG" />
+      <GoogleAnalytics gaId="G-JD9LGJBFFJ"/>
     </RootLayout>
   )
 }
