@@ -24,6 +24,7 @@
 pnpm-lock.yaml
 .DS_Store
 *.pem
+docker-compose.local.yml
 
 # debug
 npm-debug.log*

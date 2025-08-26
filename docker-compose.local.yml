@@ -1,18 +1,9 @@
 services:
   web:
     build: .
-    image: web-dev:latest 
-    command: npm run dev 
-    volumes:
-      - .:/app 
-    ports:
-      - "3000:3000" 
-    networks:
-      - axienet
-    env_file:
-      - .env 
-    depends_on:
-      - mongodb_treasury
+    image: web:latest
+    expose:
+      - "3000"
 
   nginx:
     image: nginx:alpine
@@ -23,25 +14,4 @@ services:
       - "8080:80" 
     depends_on:
       - web
-    networks:
-      - axienet
 
-  mongodb_treasury:
-    image: mongo:7.0
-    container_name: mongodb_treasury-local
-    ports:
-      - "2718:27017"
-    volumes:
-      - mongo_treasury_data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=password
-    networks:
-      - axienet
-
-networks:
-  axienet:
-    driver: bridge
-
-volumes:
-  mongo_treasury_data:
