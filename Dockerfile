@@ -15,6 +15,9 @@ RUN pnpm prune --prod
 
 FROM node:20-slim
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl
+
 RUN corepack enable
 COPY --from=builder /app ./
 CMD ["pnpm", "start"]
