@@ -33,6 +33,8 @@ services:
     volumes:
       - mongo_treasury_data:/data/db
     command: ["mongod", "--auth"]
+    networks:
+      - axienet
 
 networks:
   axienet:
