@@ -1,6 +1,5 @@
 import { Badge } from "@/components/Badge"
 import { LineChart } from "@/components/LineChart"
-import { overviews } from "@/data/overview-data"
 import { OverviewData } from "@/data/schema"
 import { cx, formatters, percentageFormatter } from "@/lib/utils"
 import {
@@ -20,6 +19,7 @@ export type CardProps = {
   selectedDates: DateRange | undefined
   selectedPeriod: PeriodValue
   isThumbnail?: boolean
+  data: OverviewData[]
 }
 
 const formattingMap = {
@@ -46,6 +46,7 @@ export function ChartCard({
   selectedDates,
   selectedPeriod,
   isThumbnail,
+  data: rawData = [],
 }: CardProps) {
   const formatter = formattingMap[type]
   const selectedDatesInterval =
@@ -63,28 +64,47 @@ export function ChartCard({
       ? interval(prevDates.from, prevDates.to)
       : null
 
-  const data = overviews
+  const data = rawData
     .filter((overview) => {
       if (selectedDatesInterval) {
-        return isWithinInterval(overview.date, selectedDatesInterval)
+        const dateStr = overview.date.includes('T') ? overview.date.split('T')[0] : overview.date
+        return isWithinInterval(new Date(dateStr + 'T00:00:00'), selectedDatesInterval)
       }
       return true
     })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-  const prevData = overviews
+  const prevData = rawData
     .filter((overview) => {
       if (prevDatesInterval) {
-        return isWithinInterval(overview.date, prevDatesInterval)
+        const dateStr = overview.date.includes('T') ? overview.date.split('T')[0] : overview.date
+        return isWithinInterval(new Date(dateStr + 'T00:00:00'), prevDatesInterval)
       }
       return false
     })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   const chartData = allDatesInInterval
-    ?.map((date, index) => {
-      const overview = data[index]
-      const prevOverview = prevData[index]
+    ?.map((date) => {
+      const dateStr = formatDate(date, "yyyy-MM-dd")
+      const overview = data.find(d => {
+        const dDateStr = d.date.includes('T') ? d.date.split('T')[0] : d.date;
+        return formatDate(new Date(dDateStr + 'T00:00:00'), "yyyy-MM-dd") === dateStr
+      })
+
+      // Calculate previous date match
+      // For each date in the current interval, we want the corresponding date in the previous interval
+      // The simple index matching is brittle. We should find the date relative to the start.
+
+      const daysDiff = selectedDates?.from ? Math.floor((date.getTime() - selectedDates.from.getTime()) / (1000 * 60 * 60 * 24)) : 0
+      const prevDateTarget = prevDates?.from ? new Date(prevDates.from.getTime() + daysDiff * 24 * 60 * 60 * 1000) : null
+      const prevDateStr = prevDateTarget ? formatDate(prevDateTarget, "yyyy-MM-dd") : null
+
+      const prevOverview = prevDateStr ? prevData.find(d => {
+        const dDateStr = d.date.includes('T') ? d.date.split('T')[0] : d.date;
+        return formatDate(new Date(dDateStr + 'T00:00:00'), "yyyy-MM-dd") === prevDateStr
+      }) : undefined
+
       const value = (overview?.[title] as number) || 0
       const previousValue = (prevOverview?.[title] as number) || null
 
@@ -95,7 +115,7 @@ export function ChartCard({
         value,
         previousDate: prevOverview?.date,
         previousFormattedDate: prevOverview
-          ? formatDate(prevOverview.date, "dd/MM/yyyy")
+          ? formatDate(new Date(prevOverview.date), "dd/MM/yyyy")
           : null,
         previousValue:
           selectedPeriod !== "no-comparison" ? previousValue : null,

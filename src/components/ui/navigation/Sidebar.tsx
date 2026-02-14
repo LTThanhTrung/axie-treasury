@@ -11,8 +11,8 @@ import MobileSidebar from "./MobileSidebar"
 import ThemeSwitch from "@/components/ThemeSwitch"
 
 const navigation = [
-  { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line },
-  { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM }
+  { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line, target: undefined },
+  { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM, target: "_blank" }
 ] as const
 
 export function Sidebar() {
@@ -44,6 +44,7 @@ export function Sidebar() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
+                    target={item.target}
                     className={cx(
                       isActive(item.href)
                         ? "text-indigo-600 dark:text-indigo-400"

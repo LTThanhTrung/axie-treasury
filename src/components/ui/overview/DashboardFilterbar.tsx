@@ -30,6 +30,7 @@ import { eachDayOfInterval, interval, subDays, subYears } from "date-fns"
 import React from "react"
 import { DateRange } from "react-day-picker"
 import { ChartCard } from "./DashboardChartCard"
+import { OverviewData } from "@/data/schema"
 
 type PeriodValue = "previous-period" | "last-year" | "no-comparison"
 
@@ -96,6 +97,7 @@ type FilterbarProps = {
     categories: any[]
     setSelectedCategories: any
     selectedCategories: any
+    data: OverviewData[]
 }
 
 export function Filterbar({
@@ -108,6 +110,7 @@ export function Filterbar({
     categories,
     setSelectedCategories,
     selectedCategories,
+    data,
 }: FilterbarProps) {
     const [tempSelectedCategories, setTempSelectedCategories] =
         React.useState(selectedCategories)
@@ -205,6 +208,7 @@ export function Filterbar({
                                             selectedDates={selectedDates}
                                             selectedPeriod={selectedPeriod}
                                             isThumbnail={true}
+                                            data={data}
                                         />
                                     </div>
                                 </Label>
