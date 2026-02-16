@@ -8,9 +8,9 @@ export default async function handler(
     try {
         await prisma.$connect();
 
-        res.status(200).json({ status: "Conectado com sucesso" });
+        res.status(200).json({ status: "Connected to database" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Erro ao conectar" });
+        res.status(500).json({ error: "Error connecting to database" });
     }
 }

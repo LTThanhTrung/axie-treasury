@@ -12,14 +12,16 @@ import {
   RiHome2Line,
   RiLinkM,
   RiMenuLine,
+  RiWallet3Line,
 } from "@remixicon/react"
 import ThemeSwitch from "@/components/ThemeSwitch"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navigation = [
-  { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line },
-  { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM }
+  { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line, target: undefined },
+  { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM, target: "_blank" },
+  { name: "Wallet", href: "https://app.roninchain.com/address/0x245db945c485b68fdc429e4f7085a1761aa4d45d?t=tokens&p=1&ps=25", icon: RiWallet3Line, target: "_blank" }
 ] as const
 
 export default function MobileSidebar() {
@@ -54,6 +56,7 @@ export default function MobileSidebar() {
                     <DrawerClose asChild>
                       <Link
                         href={item.href}
+                        target={item.target}
                         className={cx(
                           isActive(item.href)
                             ? "text-indigo-600 dark:text-indigo-400"
