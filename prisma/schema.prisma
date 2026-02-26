@@ -41,6 +41,7 @@ model TypeData {
   Origins     Json?
   Other       Json?
   Pack        Json?
+  bAXS        Json?
 
   @@map("typeData")
 }
