@@ -156,7 +156,7 @@ export default function Home() {
       let tokenPrice = pIdx !== -1 ? price[pIdx].price : 0
       return { name: tokenAddressesToNames[token], value: amount * tokenPrice }
     })
-    return { name: item, value: objs.reduce((acc, obj) => acc + obj.value, 0) }
+    return { name: item, value: Number(objs.reduce((acc, obj) => acc + obj.value, 0).toFixed(2)) };
   }) : []
 
   const maxDateValue = apiOverviews.length > 0
