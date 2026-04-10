@@ -4,6 +4,7 @@ import { cx, focusRing } from "@/lib/utils"
 import {
   RiHome2Line,
   RiLinkM,
+  RiSafe2Line,
   RiWallet3Line,
 } from "@remixicon/react"
 import Link from "next/link"
@@ -12,7 +13,8 @@ import MobileSidebar from "./MobileSidebar"
 import ThemeSwitch from "@/components/ThemeSwitch"
 
 const navigation = [
-  { name: "Home", href: siteConfig.baseLinks.home, icon: RiHome2Line, target: undefined },
+  { name: "Treasury Data", href: siteConfig.baseLinks.home, icon: RiHome2Line, target: undefined },
+  { name: "AXS Staking", href: "/axs-staking", icon: RiSafe2Line, target: undefined },
   { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM, target: "_blank" },
   { name: "Wallet", href: "https://app.roninchain.com/address/0x245db945c485b68fdc429e4f7085a1761aa4d45d?t=tokens&p=1&ps=25", icon: RiWallet3Line, target: "_blank" }
 ] as const
@@ -21,6 +23,9 @@ export function Sidebar() {
   const pathname = usePathname()
 
   const isActive = (itemHref: string) => {
+    if (itemHref === "/") {
+      return pathname === "/"
+    }
     return pathname === itemHref || pathname.startsWith(itemHref)
   }
   return (

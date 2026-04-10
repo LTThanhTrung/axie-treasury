@@ -29,3 +29,11 @@ export type TokenAmount = {
 export type TransactionTypeData = {
   [key: string] : TokenAmount
 }
+
+export type StakingAXSData = {
+  id: string
+  date: string
+  hour: string
+  timestamp: number
+  axs_total: number
+}

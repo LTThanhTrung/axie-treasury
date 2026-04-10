@@ -45,3 +45,13 @@ model TypeData {
 
   @@map("typeData")
 }
+
+model StakingAXS {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  date      String
+  hour      String
+  timestamp Int
+  axs_total Float
+
+  @@map("stakingAXS")
+}
