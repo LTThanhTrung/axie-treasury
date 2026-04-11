@@ -121,6 +121,7 @@ export default function AXSStaking() {
                           className="h-72 w-72"
                           showLabel={true}
                           label={(circulatingSupply || 0) > 0 ? (circulatingSupply || 0).toLocaleString(undefined, { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 }) : ""}
+                          labelClassName="fill-white"
                         />
                       </div>
 
@@ -142,19 +143,30 @@ export default function AXSStaking() {
                             </div>
                           </div>
                         ))}
-                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between gap-4">
-                          <div>
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Circulating Supply</p>
-                            <p className="text-lg font-bold text-gray-900 dark:text-gray-50">
-                              {(circulatingSupply || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS
-                            </p>
+                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                          <div className="flex justify-between gap-4 mb-3">
+                            <div>
+                              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Circulating Supply</p>
+                              <p className="text-lg font-bold text-gray-900 dark:text-gray-50">
+                                {(circulatingSupply || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Supply</p>
+                              <p className="text-lg font-bold text-gray-900 dark:text-gray-50">
+                                270.000.000 AXS
+                              </p>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Supply</p>
-                            <p className="text-lg font-bold text-gray-900 dark:text-gray-50">
-                              270.000.000 AXS
-                            </p>
+                          <div className="relative h-2.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                            <div 
+                              className="absolute top-0 left-0 h-full bg-white dark:bg-gray-100 rounded-full transition-all duration-1000 shadow-sm"
+                              style={{ width: `${Math.min(100, ((circulatingSupply || 0) / 270000000) * 100)}%` }}
+                            />
                           </div>
+                          <p className="mt-1.5 text-right text-[10px] font-medium text-gray-400 uppercase tracking-tight">
+                            {(((circulatingSupply || 0) / 270000000) * 100).toFixed(1)}% Released
+                          </p>
                         </div>
                       </div>
                     </div>

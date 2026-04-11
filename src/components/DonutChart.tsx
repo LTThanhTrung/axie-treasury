@@ -162,11 +162,14 @@ interface DonutChartProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: DonutChartVariant
   valueFormatter?: (value: number) => string
   label?: string
+  labelClassName?: string
   showLabel?: boolean
   showTooltip?: boolean
+  showPieLabel?: boolean
   onValueChange?: (value: DonutChartEventProps) => void
   tooltipCallback?: (tooltipCallbackContent: TooltipProps) => void
   customTooltip?: React.ComponentType<TooltipProps>
+  customPieLabel?: (props: any) => React.ReactNode
 }
 
 const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
@@ -179,11 +182,14 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
       variant = "donut",
       valueFormatter = (value: number) => value.toString(),
       label,
+      labelClassName,
       showLabel = false,
       showTooltip = true,
+      showPieLabel = false,
       onValueChange,
       tooltipCallback,
       customTooltip,
+      customPieLabel,
       className,
       ...other
     },
@@ -229,7 +235,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
           >
             {showLabel && isDonut && (
               <text
-                className="fill-gray-700 dark:fill-gray-300"
+                className={cx("fill-gray-700 dark:fill-gray-300", labelClassName)}
                 x="50%"
                 y="50%"
                 textAnchor="middle"
@@ -259,6 +265,8 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
               inactiveShape={renderInactiveShape}
               style={{ outline: "none" }}
               activeShape={{"opacity" : 1}}
+              labelLine={false}
+              label={showPieLabel ? customPieLabel : undefined}
             />
             {showTooltip && (
               <Tooltip
