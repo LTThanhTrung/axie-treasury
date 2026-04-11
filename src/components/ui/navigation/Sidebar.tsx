@@ -41,7 +41,7 @@ export function Sidebar() {
               <div className="flex w-full items-center justify-between gap-x-4 truncate">
                 <p
                   className={"truncate whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-50"}>
-                  Treasury Data
+                  Axie Treasury
                 </p>
               </div>
             </div>
