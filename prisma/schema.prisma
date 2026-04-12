@@ -85,3 +85,29 @@ model DailyAXS {
 
   @@map("dailyAXS")
 }
+
+model SumBAXS {
+  id            String @id @map("_id")
+  Forge         Float?
+  Evolve        Float?
+  bAXSFee       Float? @map("bAXS Fee")
+  Breeding      Float?
+  RunesCharms   Float? @map("Runes & Charms")
+  Ascend        Float?
+  absoluteTotal Float? @map("absolute_total")
+
+  @@map("BAXSsum")
+}
+
+model DailyBAXS {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  date        String
+  Forge       Float?
+  Evolve      Float?
+  bAXSFee     Float?  @map("bAXS Fee")
+  Breeding    Float?
+  RunesCharms Float?  @map("Runes & Charms")
+  Ascend      Float?
+
+  @@map("BAXSdaily")
+}

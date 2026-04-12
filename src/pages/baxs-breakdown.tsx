@@ -22,16 +22,14 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 type BreakdownData = {
   Forge: number
   Evolve: number
-  Other: number
   bAXS: number
   Breeding: number
-  AtiaRestore: number
   RunesCharms: number
   Ascend: number
   absoluteTotal: number
 }
 
-export default function AXSBreakdown() {
+export default function BAXSBreakdown() {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<BreakdownData | null>(null)
   const [dailyData, setDailyData] = useState<any[]>([])
@@ -64,18 +62,16 @@ export default function AXSBreakdown() {
     setLoading(true)
     try {
       const [summaryRes, dailyRes] = await Promise.all([
-        axios.get('/api/sumAXS'),
-        axios.get('/api/dailyAXS')
+        axios.get('/api/sumBAXS'),
+        axios.get('/api/dailyBAXS')
       ])
 
       const raw = summaryRes.data
       setData({
         Forge: raw.Forge || 0,
         Evolve: raw.Evolve || 0,
-        Other: raw.Other || 0,
-        bAXS: raw.bAXS || raw["bAXS Fee"] || raw["bAXS Fees"] || 0,
+        bAXS: raw.bAXSFee || raw["bAXS Fee"] || 0,
         Breeding: raw.Breeding || 0,
-        AtiaRestore: raw.AtiaRestore || raw["Atia's Restore"] || 0,
         RunesCharms: raw.RunesCharms || raw["Runes & Charms"] || 0,
         Ascend: raw.Ascend || 0,
         absoluteTotal: raw.absoluteTotal || raw.absolute_total || 0,
@@ -83,7 +79,7 @@ export default function AXSBreakdown() {
 
       setDailyData(dailyRes.data || [])
     } catch (error) {
-      console.error("Erro ao carregar breakdown de AXS:", error)
+      console.error("Erro ao carregar breakdown de bAXS:", error)
     } finally {
       setLoading(false)
     }
@@ -122,14 +118,12 @@ export default function AXSBreakdown() {
   }
 
   const allDistributionData = data ? [
-    { name: "Breeding", value: data.Breeding, amount: data.Breeding, color: "bg-emerald-500", chartColor: "emerald" as const },
-    { name: "Ascend", value: data.Ascend, amount: data.Ascend, color: "bg-violet-500", chartColor: "violet" as const },
-    { name: "Evolve", value: data.Evolve, amount: data.Evolve, color: "bg-blue-500", chartColor: "blue" as const },
-    { name: "Runes & Charms", value: data.RunesCharms, amount: data.RunesCharms, color: "bg-pink-500", chartColor: "pink" as const },
-    { name: "Atia's Restore", value: data.AtiaRestore, amount: data.AtiaRestore, color: "bg-fuchsia-500", chartColor: "fuchsia" as const },
-    { name: "Forge", value: data.Forge, amount: data.Forge, color: "bg-amber-500", chartColor: "amber" as const },
-    { name: "bAXS Fee", value: data.bAXS, amount: data.bAXS, color: "bg-cyan-500", chartColor: "cyan" as const },
-    { name: "Other", value: data.Other, amount: data.Other, color: "bg-gray-500", chartColor: "gray" as const },
+    { name: "Breeding", value: data.Breeding, color: "bg-emerald-500", chartColor: "emerald" as const },
+    { name: "Ascend", value: data.Ascend, color: "bg-violet-500", chartColor: "violet" as const },
+    { name: "Evolve", value: data.Evolve, color: "bg-blue-500", chartColor: "blue" as const },
+    { name: "Runes & Charms", value: data.RunesCharms, color: "bg-pink-500", chartColor: "pink" as const },
+    { name: "Forge", value: data.Forge, color: "bg-amber-500", chartColor: "amber" as const },
+    { name: "bAXS Fee", value: data.bAXS, color: "bg-cyan-500", chartColor: "cyan" as const },
   ].sort((a, b) => b.value - a.value) : []
 
   const chartData = allDistributionData.filter(item => !excludedNames.has(item.name))
@@ -141,9 +135,9 @@ export default function AXSBreakdown() {
         <header>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">AXS Inflow Breakdown</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">bAXS Inflow Breakdown</h1>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
-                Detailed view of AXS entering the Axie Treasury by source.
+                Detailed view of bAXS (Bonded AXS) entering the Axie Treasury by source.
               </p>
             </div>
             {excludedNames.size > 0 && (
@@ -161,20 +155,20 @@ export default function AXSBreakdown() {
           <Card className={loading ? "flex items-center justify-center min-h-[500px]" : "p-8"}>
             {loading ? <Spinner /> : data && (
               <div className="flex flex-col items-center justify-center">
-                <h2 className="text-center font-bold text-gray-900 dark:text-gray-50 text-xl mb-12">
-                  Total AXS Inflow Distribution
+                <h2 className="text-center font-bold text-gray-900 dark:text-gray-50 text-lg mb-8">
+                  Total bAXS Inflow Distribution
                 </h2>
 
                 <div className="flex flex-col lg:row-row items-center justify-center gap-12 w-full max-w-6xl">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full items-center">
-                    {/* Gráfico */}
+                    {/* Chart */}
                     <div className="relative flex items-center justify-center">
                       <DonutChart
                         data={chartData}
                         category="name"
                         value="value"
                         colors={chartData.map(d => d.chartColor)}
-                        valueFormatter={(number) => `${(number || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS`}
+                        valueFormatter={(number) => `${(number || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })} bAXS`}
                         className="h-80 w-80 sm:h-96 sm:w-96"
                         showLabel={true}
                         label={visibleTotal.toLocaleString(undefined, { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 1 })}
@@ -182,7 +176,7 @@ export default function AXSBreakdown() {
                       />
                     </div>
 
-                    {/* Legenda Customizada / Tabela */}
+                    {/* Legend / Table */}
                     <div className="flex flex-col gap-3 w-full">
                       <div className="grid grid-cols-3 pb-2 border-b border-gray-200 dark:border-gray-800 px-2">
                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Source</span>
@@ -225,13 +219,13 @@ export default function AXSBreakdown() {
                             {excludedNames.size > 0 ? 'Visible Inflow' : 'Total Inflow'}
                           </span>
                           <span className="text-lg font-black text-gray-900 dark:text-gray-50">
-                            {visibleTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS
+                            {visibleTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} bAXS
                           </span>
                         </div>
                         {excludedNames.size > 0 && (
                           <div className="flex justify-between items-center px-2 text-xs text-gray-400 italic">
                             <span>Absolute Total</span>
-                            <span>{data.absoluteTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS</span>
+                            <span>{data.absoluteTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} bAXS</span>
                           </div>
                         )}
                       </div>
@@ -250,7 +244,7 @@ export default function AXSBreakdown() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                   <div>
                     <h2 className="text-lg font-bold text-gray-900 dark:text-gray-50">
-                      Historical Diversification and Volume Trends
+                      Historical Diversification and Volume Trends (bAXS)
                     </h2>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Analysis of daily trends and proportional source contribution
@@ -287,9 +281,9 @@ export default function AXSBreakdown() {
                         <button
                           key={opt.id}
                           onClick={() => setSelectedTimeframe(opt.id as any)}
-                          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${selectedTimeframe === opt.id
-                              ? "bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                              : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                          className={`px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all duration-200 ${selectedTimeframe === opt.id
+                            ? "bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                            : "text-gray-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-slate-200"
                             }`}
                         >
                           {opt.label}
@@ -307,10 +301,8 @@ export default function AXSBreakdown() {
                       "Ascend": item.Ascend || 0,
                       "Evolve": item.Evolve || 0,
                       "Runes & Charms": item.RunesCharms || item["Runes & Charms"] || 0,
-                      "Atia's Restore": item.AtiaRestore || item["Atia's Restore"] || 0,
                       "Forge": item.Forge || 0,
-                      "bAXS Fee": item.bAXSFee || item["bAXS Fee"] || 0,
-                      "Other": item.Other || 0
+                      "bAXS Fee": item.bAXSFee || item["bAXS Fee"] || 0
                     }))}
                     index="date"
                     categories={[
@@ -318,20 +310,16 @@ export default function AXSBreakdown() {
                       "Ascend",
                       "Evolve",
                       "Runes & Charms",
-                      "Atia's Restore",
                       "Forge",
-                      "bAXS Fee",
-                      "Other"
+                      "bAXS Fee"
                     ]}
                     colors={[
                       "emerald",
                       "violet",
                       "blue",
                       "pink",
-                      "fuchsia",
                       "amber",
-                      "cyan",
-                      "gray"
+                      "cyan"
                     ]}
                     valueFormatter={(number) => `${(number || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
                   />
@@ -340,9 +328,6 @@ export default function AXSBreakdown() {
             )}
           </Card>
         </section>
-
-
-
       </div>
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
