@@ -61,7 +61,7 @@ model SumAXS {
   Forge         Float?
   Evolve        Float?
   Other         Float?
-  bAXS          Float?
+  bAXS          Float? @map("bAXS Fee")
   Breeding      Float?
   AtiaRestore   Float? @map("Atia's Restore")
   RunesCharms   Float? @map("Runes & Charms")
@@ -69,4 +69,19 @@ model SumAXS {
   absoluteTotal Float? @map("absolute_total")
 
   @@map("sumAXS")
+}
+
+model DailyAXS {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  date          String
+  Forge         Float?
+  Evolve        Float?
+  Other         Float?
+  bAXSFee       Float?  @map("bAXS Fee")
+  Breeding      Float?
+  AtiaRestore   Float?  @map("Atia's Restore")
+  RunesCharms   Float?  @map("Runes & Charms")
+  Ascend        Float?
+
+  @@map("dailyAXS")
 }
