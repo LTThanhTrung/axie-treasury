@@ -55,3 +55,18 @@ model StakingAXS {
 
   @@map("stakingAXS")
 }
+
+model SumAXS {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  Forge         Float?
+  Evolve        Float?
+  Other         Float?
+  bAXS          Float?
+  Breeding      Float?
+  AtiaRestore   Float? @map("Atia's Restore")
+  RunesCharms   Float? @map("Runes & Charms")
+  Ascend        Float?
+  absoluteTotal Float? @map("absolute_total")
+
+  @@map("sumAXS")
+}
