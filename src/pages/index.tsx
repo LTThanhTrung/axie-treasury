@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import axios from 'axios'
+import Head from 'next/head'
 import { subDays, toDate } from "date-fns"
 import { DateRange } from "react-day-picker"
 
@@ -168,6 +169,9 @@ export default function Home() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} p-4 sm:px-6 lg:px-10`}>
+      <Head>
+        <title>Treasury Data | Axie Treasury</title>
+      </Head>
       <div className="flex flex-col gap-16">
         <div className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3">
 

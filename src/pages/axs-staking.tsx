@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import axios from 'axios'
+import Head from 'next/head'
 import { subDays, toDate } from "date-fns"
 import { DateRange } from "react-day-picker"
 
@@ -91,6 +92,9 @@ export default function AXSStaking() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} p-4 sm:px-6 lg:px-10`}>
+      <Head>
+        <title>AXS Staking | Axie Treasury</title>
+      </Head>
       <div className="flex flex-col gap-8">
         <section aria-labelledby="staking-overview">
           <div className="mt-8">

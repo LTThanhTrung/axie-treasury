@@ -6,7 +6,9 @@ import { GeistSans } from "geist/font/sans"
 export default function Document() {
   return (
     <Html lang="en" suppressHydrationWarning className="dark:bg-gray-950">
-      <Head />
+      <Head>
+        <link rel="icon" href="/lunacia-flag.ico" />
+      </Head>
       <body className={`${GeistSans.className} antialiased min-h-screen scroll-auto antialiased selection:bg-indigo-100 selection:text-indigo-700 dark:bg-gray-950`}>
         <Main />
         <NextScript />

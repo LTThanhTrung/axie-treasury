@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import axios from 'axios'
+import Head from 'next/head'
 import { Geist, Geist_Mono } from "next/font/google"
 import { DonutChart } from "@/components/DonutChart"
 import { Card } from "@/components/Card"
@@ -137,6 +138,9 @@ export default function AXSBreakdown() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} p-4 sm:px-6 lg:px-10 min-h-screen`}>
+      <Head>
+        <title>AXS Breakdown | Axie Treasury</title>
+      </Head>
       <div className="flex flex-col gap-8">
         <header>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

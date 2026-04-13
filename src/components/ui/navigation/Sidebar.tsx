@@ -50,26 +50,59 @@ export function Sidebar() {
               </div>
             </div>
 
-            <ul role="list" className="space-y-0.5">
-              {navigation.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    target={item.target}
-                    className={cx(
-                      isActive(item.href)
-                        ? "text-indigo-600 dark:text-indigo-400"
-                        : "text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50",
-                      "flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900",
-                      focusRing,
-                    )}
-                  >
-                    <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="flex flex-col gap-y-7">
+              <div>
+                <p className="px-2 mb-2 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
+                  Dashboards
+                </p>
+                <ul role="list" className="space-y-0.5">
+                  {navigation.slice(0, 4).map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        target={item.target}
+                        className={cx(
+                          isActive(item.href)
+                            ? "text-indigo-600 dark:text-indigo-400"
+                            : "text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50",
+                          "flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900",
+                          focusRing,
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="px-2 mb-2 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
+                  External Links
+                </p>
+                <ul role="list" className="space-y-0.5">
+                  {navigation.slice(4).map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        target={item.target}
+                        className={cx(
+                          isActive(item.href)
+                            ? "text-indigo-600 dark:text-indigo-400"
+                            : "text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50",
+                          "flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900",
+                          focusRing,
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </nav>
           <ThemeSwitch />
         </aside>
