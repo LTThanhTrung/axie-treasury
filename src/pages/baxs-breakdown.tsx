@@ -25,6 +25,7 @@ type BreakdownData = {
   bAXS: number
   Breeding: number
   RunesCharms: number
+  AtiaRestore: number
   Ascend: number
   absoluteTotal: number
 }
@@ -70,11 +71,12 @@ export default function BAXSBreakdown() {
       setData({
         Forge: raw.Forge || 0,
         Evolve: raw.Evolve || 0,
-        bAXS: raw.bAXSFee || raw["bAXS Fee"] || 0,
+        bAXS: raw["bAXS Fee"] || raw.bAXSFee || raw.bAXS || 0,
         Breeding: raw.Breeding || 0,
-        RunesCharms: raw.RunesCharms || raw["Runes & Charms"] || 0,
+        RunesCharms: raw["Runes & Charms"] || raw.RunesCharms || 0,
+        AtiaRestore: raw["Atia's Restore"] || raw.AtiaRestore || 0,
         Ascend: raw.Ascend || 0,
-        absoluteTotal: raw.absoluteTotal || raw.absolute_total || 0,
+        absoluteTotal: raw.absolute_total || raw.absoluteTotal || 0,
       })
 
       setDailyData(dailyRes.data || [])
@@ -122,6 +124,7 @@ export default function BAXSBreakdown() {
     { name: "Ascend", value: data.Ascend, color: "bg-violet-500", chartColor: "violet" as const },
     { name: "Evolve", value: data.Evolve, color: "bg-blue-500", chartColor: "blue" as const },
     { name: "Runes & Charms", value: data.RunesCharms, color: "bg-pink-500", chartColor: "pink" as const },
+    { name: "Atia's Restore", value: data.AtiaRestore, color: "bg-fuchsia-500", chartColor: "fuchsia" as const },
     { name: "Forge", value: data.Forge, color: "bg-amber-500", chartColor: "amber" as const },
     { name: "bAXS Fee", value: data.bAXS, color: "bg-cyan-500", chartColor: "cyan" as const },
   ].sort((a, b) => b.value - a.value) : []
@@ -300,9 +303,10 @@ export default function BAXSBreakdown() {
                       "Breeding": item.Breeding || 0,
                       "Ascend": item.Ascend || 0,
                       "Evolve": item.Evolve || 0,
-                      "Runes & Charms": item.RunesCharms || item["Runes & Charms"] || 0,
+                      "Runes & Charms": item["Runes & Charms"] || item.RunesCharms || 0,
+                      "Atia's Restore": item["Atia's Restore"] || item.AtiaRestore || 0,
                       "Forge": item.Forge || 0,
-                      "bAXS Fee": item.bAXSFee || item["bAXS Fee"] || 0
+                      "bAXS Fee": item["bAXS Fee"] || item.bAXSFee || 0
                     }))}
                     index="date"
                     categories={[
@@ -310,6 +314,7 @@ export default function BAXSBreakdown() {
                       "Ascend",
                       "Evolve",
                       "Runes & Charms",
+                      "Atia's Restore",
                       "Forge",
                       "bAXS Fee"
                     ]}
@@ -318,6 +323,7 @@ export default function BAXSBreakdown() {
                       "violet",
                       "blue",
                       "pink",
+                      "fuchsia",
                       "amber",
                       "cyan"
                     ]}

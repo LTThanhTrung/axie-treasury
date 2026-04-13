@@ -92,6 +92,7 @@ model SumBAXS {
   Evolve        Float?
   bAXSFee       Float? @map("bAXS Fee")
   Breeding      Float?
+  AtiaRestore   Float? @map("Atia's Restore")
   RunesCharms   Float? @map("Runes & Charms")
   Ascend        Float?
   absoluteTotal Float? @map("absolute_total")
@@ -106,6 +107,7 @@ model DailyBAXS {
   Evolve      Float?
   bAXSFee     Float?  @map("bAXS Fee")
   Breeding    Float?
+  AtiaRestore Float?  @map("Atia's Restore")
   RunesCharms Float?  @map("Runes & Charms")
   Ascend      Float?
 
