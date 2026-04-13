@@ -277,7 +277,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
                     ? payload.map((item: any) => (
                       {
                         category: item.payload[category],
-                        value: item.payload["amount"],
+                        value: item.payload[value],
                         color: categoryColors.get(
                           item.payload[category],
                         ) as AvailableChartColorsKeys,

@@ -4,7 +4,8 @@ export const siteConfig = {
   description: "Axie Infinity Dashboard",
   baseLinks: {
     home: "/",
-    whitepaper: "https://whitepaper.axieinfinity.com/"
+    whitepaper: "https://whitepaper.axieinfinity.com/",
+    governance: "https://publish.obsidian.md/axiegov/AxieGov/Home"
   },
 }
 
