@@ -113,3 +113,12 @@ model DailyBAXS {
 
   @@map("BAXSdaily")
 }
+
+model CirculatingSupply {
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  circulating_supply Float
+  datetime           String
+  timestamp          Int
+
+  @@map("circulatingSupply")
+}

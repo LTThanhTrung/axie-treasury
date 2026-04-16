@@ -37,7 +37,7 @@ export default function AXSStaking() {
       const [stakingRes, typeDataRes, supplyRes] = await Promise.all([
         axios.get('/api/stakingAXS'),
         axios.get('/api/typeData'),
-        axios.get('https://skynet-api.roninchain.com/ronin/supplies/axs/circulating')
+        axios.get('/api/circulatingSupply')
       ]);
 
       const data = stakingRes.data || [];
@@ -53,7 +53,7 @@ export default function AXSStaking() {
       setTreasuryAXS(totalTreasury);
 
       // Set Circulating Supply
-      const totalCirculating = Number(supplyRes.data.result.value);
+      const totalCirculating = Number(supplyRes.data.circulating_supply);
       setCirculatingSupply(totalCirculating);
 
       if (data.length > 0) {
