@@ -487,6 +487,7 @@ interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   showYAxis?: boolean
   showGridLines?: boolean
   yAxisWidth?: number
+  yAxisOrientation?: "left" | "right"
   intervalType?: "preserveStartEnd" | "equidistantPreserveStart"
   showTooltip?: boolean
   showLegend?: boolean
@@ -515,6 +516,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       showYAxis = true,
       showGridLines = true,
       yAxisWidth = 56,
+      yAxisOrientation = "left",
       intervalType = "equidistantPreserveStart",
       showTooltip = true,
       showLegend = true,
@@ -655,6 +657,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
             </XAxis>
             <YAxis
               width={yAxisWidth}
+              orientation={yAxisOrientation}
               hide={!showYAxis}
               axisLine={false}
               tickLine={false}
@@ -690,7 +693,6 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
               animationDuration={100}
               cursor={{ stroke: "#d1d5db", strokeWidth: 1 }}
               offset={20}
-              position={{ y: 0 }}
               content={
                 showTooltip ? (
                   ({ active, payload, label }) => {

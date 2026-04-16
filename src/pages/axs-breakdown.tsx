@@ -6,8 +6,12 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { DonutChart } from "@/components/DonutChart"
 import { Card } from "@/components/Card"
 import Spinner from "@/components/Spinner"
+import { cx } from "@/lib/utils"
+import { StakingFilterbar } from "@/components/ui/overview/StakingFilterbar"
+import { BreakdownChartCard } from "@/components/ui/overview/BreakdownChartCard"
 import { CombinedInflowChart } from "@/components/CombinedInflowChart"
-import { subDays } from "date-fns"
+import { subDays, toDate } from "date-fns"
+import { DateRange } from "react-day-picker"
 import {
   Select,
   SelectContent,
@@ -15,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/Select"
-import { cx } from "@/lib/utils"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -33,6 +36,8 @@ type BreakdownData = {
 }
 
 export default function AXSBreakdown() {
+
+
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<BreakdownData | null>(null)
   const [dailyData, setDailyData] = useState<any[]>([])
@@ -60,6 +65,11 @@ export default function AXSBreakdown() {
     })
     return Array.from(years).sort().reverse()
   }, [dailyData])
+  const [selectedDates, setSelectedDates] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  })
+  const [selectedPeriod, setSelectedPeriod] = useState<"previous-period" | "last-year" | "no-comparison">("previous-period")
 
   const fetchData = async () => {
     setLoading(true)
@@ -82,7 +92,22 @@ export default function AXSBreakdown() {
         absoluteTotal: raw.absoluteTotal || raw.absolute_total || 0,
       })
 
-      setDailyData(dailyRes.data || [])
+      const dData = dailyRes.data || []
+      setDailyData(dData)
+
+      if (dData.length > 0) {
+        const dates = dData.map((item: any) => {
+          const dateStr = item.date.includes('T') ? item.date.split('T')[0] : item.date;
+          return new Date(dateStr + 'T00:00:00').getTime();
+        })
+        const maxDate = toDate(Math.max(...dates))
+        const minDate = toDate(Math.min(...dates))
+        const defaultFrom = subDays(maxDate, 30);
+        setSelectedDates({
+          from: defaultFrom < minDate ? minDate : defaultFrom,
+          to: maxDate
+        })
+      }
     } catch (error) {
       console.error("Erro ao carregar breakdown de AXS:", error)
     } finally {
@@ -123,18 +148,32 @@ export default function AXSBreakdown() {
   }
 
   const allDistributionData = data ? [
-    { name: "Breeding", value: data.Breeding, amount: data.Breeding, color: "bg-emerald-500", chartColor: "emerald" as const },
-    { name: "Ascend", value: data.Ascend, amount: data.Ascend, color: "bg-violet-500", chartColor: "violet" as const },
-    { name: "Evolve", value: data.Evolve, amount: data.Evolve, color: "bg-blue-500", chartColor: "blue" as const },
-    { name: "Runes & Charms", value: data.RunesCharms, amount: data.RunesCharms, color: "bg-pink-500", chartColor: "pink" as const },
-    { name: "Atia's Restore", value: data.AtiaRestore, amount: data.AtiaRestore, color: "bg-fuchsia-500", chartColor: "fuchsia" as const },
-    { name: "Forge", value: data.Forge, amount: data.Forge, color: "bg-amber-500", chartColor: "amber" as const },
-    { name: "bAXS Fee", value: data.bAXS, amount: data.bAXS, color: "bg-cyan-500", chartColor: "cyan" as const },
-    { name: "Other", value: data.Other, amount: data.Other, color: "bg-gray-500", chartColor: "gray" as const },
+    { name: "Evolve", value: data.Evolve, amount: data.Evolve, color: "bg-blue-500", chartColor: "blue" as const, dataKey: "Evolve" },
+    { name: "Ascend", value: data.Ascend, amount: data.Ascend, color: "bg-violet-500", chartColor: "violet" as const, dataKey: "Ascend" },
+    { name: "Breeding", value: data.Breeding, amount: data.Breeding, color: "bg-emerald-500", chartColor: "emerald" as const, dataKey: "Breeding" },
+    { name: "Runes & Charms", value: data.RunesCharms, amount: data.RunesCharms, color: "bg-pink-500", chartColor: "pink" as const, dataKey: "RunesCharms" },
+    { name: "bAXS Fee", value: data.bAXS, amount: data.bAXS, color: "bg-cyan-500", chartColor: "cyan" as const, dataKey: "bAXSFee" },
+    { name: "Atia's Restore", value: data.AtiaRestore, amount: data.AtiaRestore, color: "bg-fuchsia-500", chartColor: "fuchsia" as const, dataKey: "AtiaRestore" },
+    { name: "Forge", value: data.Forge, amount: data.Forge, color: "bg-amber-500", chartColor: "amber" as const, dataKey: "Forge" },
+    { name: "Other", value: data.Other, amount: data.Other, color: "bg-gray-500", chartColor: "gray" as const, dataKey: "Other" },
   ].sort((a, b) => b.value - a.value) : []
 
   const chartData = allDistributionData.filter(item => !excludedNames.has(item.name))
   const visibleTotal = chartData.reduce((acc, item) => acc + item.value, 0)
+
+  const maxDateValue = dailyData.length > 0
+    ? toDate(Math.max(...dailyData.map(i => {
+      const d = i.date?.includes('T') ? i.date.split('T')[0] : i.date;
+      return d ? new Date(d + 'T00:00:00').getTime() : Date.now();
+    })))
+    : new Date();
+
+  const minDateValue = dailyData.length > 0
+    ? toDate(Math.min(...dailyData.map(i => {
+      const d = i.date?.includes('T') ? i.date.split('T')[0] : i.date;
+      return d ? new Date(d + 'T00:00:00').getTime() : Date.now();
+    })))
+    : new Date(2021, 3, 27);
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} p-4 sm:px-6 lg:px-10 min-h-screen`}>
@@ -307,38 +346,85 @@ export default function AXSBreakdown() {
                   <CombinedInflowChart
                     data={filteredDailyData.map(item => ({
                       ...item,
-                      "Breeding": item.Breeding || 0,
-                      "Ascend": item.Ascend || 0,
                       "Evolve": item.Evolve || 0,
+                      "Ascend": item.Ascend || 0,
+                      "Breeding": item.Breeding || 0,
                       "Runes & Charms": item.RunesCharms || item["Runes & Charms"] || 0,
+                      "bAXS Fee": item.bAXSFee || item["bAXS Fee"] || 0,
                       "Atia's Restore": item.AtiaRestore || item["Atia's Restore"] || 0,
                       "Forge": item.Forge || 0,
-                      "bAXS Fee": item.bAXSFee || item["bAXS Fee"] || 0,
                       "Other": item.Other || 0
+
                     }))}
                     index="date"
                     categories={[
-                      "Breeding",
-                      "Ascend",
                       "Evolve",
+                      "Ascend",
+                      "Breeding",
                       "Runes & Charms",
+                      "bAXS Fee",
                       "Atia's Restore",
                       "Forge",
-                      "bAXS Fee",
                       "Other"
                     ]}
                     colors={[
-                      "emerald",
-                      "violet",
                       "blue",
+                      "violet",
+                      "emerald",
                       "pink",
+                      "cyan",
                       "fuchsia",
                       "amber",
-                      "cyan",
                       "gray"
                     ]}
                     valueFormatter={(number) => `${(number || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
                   />
+                </div>
+
+                <div className="mt-16 border-t border-gray-100 dark:border-gray-800 pt-12">
+                  <div className="mb-8">
+                    <div className="flex flex-col gap-6">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-1">
+                          Individual AXS Categories Trend
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Isolated daily AXS inflow behavior per single category over the selected timeframe independently.
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
+                        <StakingFilterbar
+                          maxDate={maxDateValue}
+                          minDate={minDateValue}
+                          selectedDates={selectedDates}
+                          onDatesChange={setSelectedDates}
+                          selectedPeriod={selectedPeriod}
+                          onPeriodChange={setSelectedPeriod}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <dl className="mt-10 grid grid-cols-1 gap-14 lg:grid-cols-2">
+                    {[
+                      { title: "Evolve", dataKey: "Evolve" },
+                      { title: "Ascend", dataKey: "Ascend" },
+                      { title: "Breeding", dataKey: "Breeding" },
+                      { title: "Runes & Charms", dataKey: "RunesCharms" },
+                      { title: "bAXS Fee", dataKey: "bAXSFee" },
+                      { title: "Atia's Restore", dataKey: "AtiaRestore" },
+                      { title: "Forge", dataKey: "Forge" },
+                      { title: "Other", dataKey: "Other" }
+                    ].map((category) => (
+                      <BreakdownChartCard
+                        key={category.title}
+                        title={category.title}
+                        dataKey={category.dataKey}
+                        selectedDates={selectedDates}
+                        selectedPeriod={selectedPeriod}
+                        data={dailyData}
+                      />
+                    ))}
+                  </dl>
                 </div>
               </>
             )}
