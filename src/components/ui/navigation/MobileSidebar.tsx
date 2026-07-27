@@ -26,7 +26,7 @@ const navigation = [
   { name: "AXS Breakdown", href: "/axs-breakdown", icon: RiPieChartLine, target: undefined },
   { name: "bAXS Breakdown", href: "/baxs-breakdown", icon: RiPieChartLine, target: undefined },
   { name: "Whitepaper", href: siteConfig.baseLinks.whitepaper, icon: RiLinkM, target: "_blank" },
-  { name: "Wallet", href: "https://app.roninchain.com/address/0x245db945c485b68fdc429e4f7085a1761aa4d45d?t=tokens&p=1&ps=25", icon: RiWallet3Line, target: "_blank" },
+  { name: "Wallet", href: "https://explorer.roninchain.com/address/0x245db945c485b68fDc429E4F7085a1761Aa4d45d?tab=tokens", icon: RiWallet3Line, target: "_blank" },
   { name: "Governance Portal", href: siteConfig.baseLinks.governance, icon: RiLinkM, target: "_blank" }
 ] as const
 

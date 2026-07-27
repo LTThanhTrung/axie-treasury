@@ -145,6 +145,9 @@ export default function BAXSBreakdown() {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">bAXS Inflow Breakdown</h1>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
                 Detailed view of bAXS (Bonded AXS) entering the Axie Treasury by source.
+                <span className="block text-xs text-gray-400 dark:text-gray-500 mt-1 italic">
+                  Note: All bAXS enters the treasury as AXS.
+                </span>
               </p>
             </div>
             {excludedNames.size > 0 && (
@@ -226,15 +229,18 @@ export default function BAXSBreakdown() {
                             {excludedNames.size > 0 ? 'Visible Inflow' : 'Total Inflow'}
                           </span>
                           <span className="text-lg font-black text-gray-900 dark:text-gray-50">
-                            {visibleTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} bAXS
+                            {visibleTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS
                           </span>
                         </div>
                         {excludedNames.size > 0 && (
                           <div className="flex justify-between items-center px-2 text-xs text-gray-400 italic">
                             <span>Absolute Total</span>
-                            <span>{data.absoluteTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} bAXS</span>
+                            <span>{data.absoluteTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} AXS</span>
                           </div>
                         )}
+                        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-right italic pt-1">
+                          * All bAXS enters the treasury as AXS
+                        </p>
                       </div>
                     </div>
                   </div>
