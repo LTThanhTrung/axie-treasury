@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder  
+FROM node:22-slim AS builder  
 WORKDIR /app
 
 # Install pnpm
@@ -13,7 +13,7 @@ RUN pnpm run build
 
 RUN pnpm prune --prod
 
-FROM node:20-slim
+FROM node:22-slim
 WORKDIR /app
 
 RUN apt-get update -y && apt-get install -y openssl
