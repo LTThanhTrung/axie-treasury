@@ -1,15 +1,25 @@
-version: '3.8'
-
 services:
   web:
     build: .
     image: web:latest
+    container_name: axie_treasury_web
+    restart: always
     expose:
       - "3000"
-    networks:
-      - axienet
     env_file:
       - .env
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=pg_microservice_db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-axie_treasury}
+      - DB_USER=${DB_USER:-owner_axie_treasury}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=postgresql://${DB_USER:-owner_axie_treasury}:${DB_PASSWORD}@pg_microservice_db:5432/${DB_NAME:-axie_treasury}?schema=public
+      - SSH_HOST=
+    networks:
+      - database_net
+      - nginx_net
 
   nginx:
     image: nginx:alpine
@@ -17,30 +27,17 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
     ports:
-      - "8080:81"  
+      - "8080:81"
     depends_on:
       - web
+    restart: always
     networks:
-      - axienet
-      - default
-      - sharednet
-
-  mongodb_treasury:
-    image: mongo:7.0
-    container_name: mongodb_treasury
-    ports:
-      - "2718:27017"
-    volumes:
-      - mongo_treasury_data:/data/db
-    command: ["mongod", "--auth"]
-    networks:
-      - axienet
+      - nginx_net
 
 networks:
-  axienet:
-    driver: bridge
-  sharednet:
+  database_net:
+    name: postgres_db_backend_network
     external: true
-
-volumes:
-  mongo_treasury_data:
+  nginx_net:
+    name: sharednet
+    external: true

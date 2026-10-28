@@ -1,39 +1,31 @@
-// This is your Prisma schema file,
+// This is your Prisma schema file for PostgreSQL,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider      = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Test {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-}
-
 model OverviewData {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  id   String @id @default(dbgenerated("gen_random_uuid()::text"))
+  date String @unique
 
-  date String
-
-  AXS  Float
-  RON  Float
-  USDC Float
-  WETH Float
+  AXS  Float  @default(0)
+  RON  Float  @default(0)
+  USDC Float  @default(0)
+  WETH Float  @default(0)
 
   @@map("overviewData")
 }
 
 model TypeData {
-  id String @id @map("_id")
+  id String @id
 
   Breeding    Json?
   Core        Json?
@@ -47,78 +39,80 @@ model TypeData {
 }
 
 model StakingAXS {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String @id @default(dbgenerated("gen_random_uuid()::text"))
   date      String
   hour      String
-  timestamp Int
+  timestamp BigInt
   axs_total Float
 
   @@map("stakingAXS")
 }
 
 model SumAXS {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  Forge         Float?
-  Evolve        Float?
-  Other         Float?
-  bAXS          Float? @map("bAXS Fee")
-  Breeding      Float?
-  AtiaRestore   Float? @map("Atia's Restore")
-  RunesCharms   Float? @map("Runes & Charms")
-  Ascend        Float?
-  absoluteTotal Float? @map("absolute_total")
+  id            String    @id
+  Forge         Float?    @default(0)
+  Evolve        Float?    @default(0)
+  Other         Float?    @default(0)
+  bAXS          Float?    @map("bAXS Fee") @default(0)
+  Breeding      Float?    @default(0)
+  AtiaRestore   Float?    @map("Atia's Restore") @default(0)
+  RunesCharms   Float?    @map("Runes & Charms") @default(0)
+  Ascend        Float?    @default(0)
+  absoluteTotal Float?    @map("absolute_total") @default(0)
+  last_update   DateTime?
 
   @@map("sumAXS")
 }
 
 model DailyAXS {
-  id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  date          String
-  Forge         Float?
-  Evolve        Float?
-  Other         Float?
-  bAXSFee       Float?  @map("bAXS Fee")
-  Breeding      Float?
-  AtiaRestore   Float?  @map("Atia's Restore")
-  RunesCharms   Float?  @map("Runes & Charms")
-  Ascend        Float?
+  id          String  @id @default(dbgenerated("gen_random_uuid()::text"))
+  date        String  @unique
+  Forge       Float?  @default(0)
+  Evolve      Float?  @default(0)
+  Other       Float?  @default(0)
+  bAXSFee     Float?  @map("bAXS Fee") @default(0)
+  Breeding    Float?  @default(0)
+  AtiaRestore Float?  @map("Atia's Restore") @default(0)
+  RunesCharms Float?  @map("Runes & Charms") @default(0)
+  Ascend      Float?  @default(0)
 
   @@map("dailyAXS")
 }
 
 model SumBAXS {
-  id            String @id @map("_id")
-  Forge         Float?
-  Evolve        Float?
-  bAXSFee       Float? @map("bAXS Fee")
-  Breeding      Float?
-  AtiaRestore   Float? @map("Atia's Restore")
-  RunesCharms   Float? @map("Runes & Charms")
-  Ascend        Float?
-  absoluteTotal Float? @map("absolute_total")
+  id            String    @id
+  Forge         Float?    @default(0)
+  Evolve        Float?    @default(0)
+  bAXSFee       Float?    @map("bAXS Fee") @default(0)
+  Breeding      Float?    @default(0)
+  AtiaRestore   Float?    @map("Atia's Restore") @default(0)
+  RunesCharms   Float?    @map("Runes & Charms") @default(0)
+  Ascend        Float?    @default(0)
+  absoluteTotal Float?    @map("absolute_total") @default(0)
+  last_update   DateTime?
 
   @@map("BAXSsum")
 }
 
 model DailyBAXS {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  date        String
-  Forge       Float?
-  Evolve      Float?
-  bAXSFee     Float?  @map("bAXS Fee")
-  Breeding    Float?
-  AtiaRestore Float?  @map("Atia's Restore")
-  RunesCharms Float?  @map("Runes & Charms")
-  Ascend      Float?
+  id          String  @id @default(dbgenerated("gen_random_uuid()::text"))
+  date        String  @unique
+  Forge       Float?  @default(0)
+  Evolve      Float?  @default(0)
+  bAXSFee     Float?  @map("bAXS Fee") @default(0)
+  Breeding    Float?  @default(0)
+  AtiaRestore Float?  @map("Atia's Restore") @default(0)
+  RunesCharms Float?  @map("Runes & Charms") @default(0)
+  Ascend      Float?  @default(0)
 
   @@map("BAXSdaily")
 }
 
 model CirculatingSupply {
-  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String @id @default(dbgenerated("gen_random_uuid()::text"))
   circulating_supply Float
   datetime           String
-  timestamp          Int
+  timestamp          BigInt
 
   @@map("circulatingSupply")
 }
